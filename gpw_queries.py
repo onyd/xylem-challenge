@@ -9,14 +9,23 @@ COUNTRIES = "countries"
 CONTOURS = "contours"
 
 def _query(path, params):
-    response = requests.get(path, params=params)
-    data = response.json()
-    return data
+    try:
+        response = requests.get(path, params=params)
+        data = response.json()
+        return data
+    except:
+        print(f"Warning: query to {path} with params {params} couldn't return a valid json result.")
+        return None
 
 def _query_geodataframe(path, params):
-    data = _query(path, params)
-    return gpd.GeoDataFrame.from_features(data['features'])
-
+    try:
+        response = requests.get(path, params=params)
+        data = response.json()
+        return gpd.GeoDataFrame.from_features(data['features'])
+    except:
+        print(f"Warning: query to {path} with params {params} couldn't return a valid GeoDataFrame result.")
+        return None
+    
 def get_stats():
     """
     Provides summary statistics for all sites broken out by country.
@@ -43,23 +52,22 @@ def get_countries():
 
 def get_sites_by_bounding_box(bbox):
     """
-    Get all sites within the bounding box bbox.
+    Get all sites within the bounding box bbox. (bbox useless for now as it dosen't work)
     Args:
-        bbox: array-like (lon1, lat1, lon2, lat2)
+        bbox: array-like (lon1, lon2, lat1, lat2)
     Returns:
         Associated GeoDataFrame of the sites.
     """
     endpoint = URL + SITES
     params = {'apikey':'xylem',
-              'limit':'10000',
-              'bbox': bbox}
+              'limit':'10000'}
     return _query_geodataframe(endpoint, params)
 
-def get_sites_by_id(site_id):
+def get_site_by_id(site_id):
     """
-    Get the sites info from its id.
+    Get the site info from its id.
     Args:
-        site_id: integer or string id
+        site_id: site string id
     Returns:
         Associated json details of the site.
     """
@@ -85,7 +93,7 @@ def get_sites_contour(site_id):
     """
     Provides summary statistics for all sites broken out by country.
     Args:
-        site_id: integer or string id
+        site_id: site string id
     Returns:
         Associated GeoDataFrame of the site contour.
     """
