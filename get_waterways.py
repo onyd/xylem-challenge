@@ -38,4 +38,4 @@ def get_waterways(bbox):
     return json.dumps(waterways)
 
 if __name__ == "__main__":
-    print(get_waterways("48.8156,2.2241,48.9022,2.4699"))
+    print(get_waterways("70,18,74,22"))
