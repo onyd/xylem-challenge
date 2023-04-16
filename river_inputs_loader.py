@@ -24,6 +24,7 @@ def load_river_inputs(path):
         The associated GeoDataFrame.
     """
     df = gpd.read_file(path)
+    df["mpw"] /= 364.25
     model = compute_model(df)
     model[["area", "mpw", "geometry"]] = df[["area", "mpw", "geometry"]]
     model["m_out_max"] = model.loc[:,[f"m_out_{mounth}" for mounth in MOUNTHS]].max(axis=1)
